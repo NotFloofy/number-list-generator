@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>number list generator</title>
+  <style>
+    body {
+      font-family: arial, sans-serif;
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      overflow-x: hidden
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      cursor: pointer
+    }
+    button:hover {
+      background-color: #2980b9
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: left;
+      width: 100%;
+      white-space: pre-wrap;
+      word-break: break-word
+    }
+    @media (max-width: 768px) {
+      body { padding: 10px }
+      input, button { width: 100%; font-size: 16px }
+    }
+    @media (min-width: 769px) {
+      input, button { width: 200px; font-size: 18px }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>enter two numbers</h2>
+  <input type="number" id="start" placeholder="start number">
+  <input type="number" id="end" placeholder="end number">
+  
+  <div>
+    <button onclick="generateNumbers('all')">all</button>
+    <button onclick="generateNumbers('even')">even</button>
+    <button onclick="generateNumbers('odd')">odd</button>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function generateNumbers(type) {
+      let start = parseInt(document.getElementById('start').value)
+      let end = parseInt(document.getElementById('end').value)
+      if (isNaN(start) || isNaN(end)) {
+        document.getElementById('result').innerText = 'please enter valid numbers'
+        return
+      }
+      let numbers = []
+      for (let i = start; i <= end; i++) {
+        if (type === 'all') {
+          numbers.push(i)
+        } else if (type === 'even' && i % 2 === 0) {
+          numbers.push(i)
+        } else if (type === 'odd' && i % 2 !== 0) {
+          numbers.push(i)
+        }
+      }
+      let output = ''
+      for (let i = 0; i < numbers.length; i++) {
+        output += numbers[i]
+        if ((i + 1) % 10 === 0) {
+          output += '\n'
+        } else if (i !== numbers.length - 1) {
+          output += ', '
+        }
+      }
+      document.getElementById('result').innerText = output || 'no numbers found'
+    }
+  </script>
+
+</body>
+</html>
