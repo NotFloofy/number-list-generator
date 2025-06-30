@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>number list generator</title>
   <style>
     body {
@@ -14,7 +14,8 @@
       margin: 0;
       overflow-x: hidden;
     }
-    input, button {
+    input,
+    button {
       padding: 10px;
       margin: 10px;
       border: none;
@@ -35,90 +36,108 @@
       width: 100%;
       white-space: pre-wrap;
       word-break: break-word;
-      min-height: 120px;
-      border: 1px solid #2980b9;
+      min-height: 150px;
+      border: 1px solid #555;
       padding: 10px;
       border-radius: 5px;
-      background-color: #34495e;
+    }
+    .btn-row {
+      margin-top: 10px;
     }
     @media (max-width: 768px) {
-      body { padding: 10px; }
-      input, button { width: 100%; font-size: 16px; }
+      body {
+        padding: 10px;
+      }
+      input,
+      button {
+        width: 100%;
+        font-size: 16px;
+      }
     }
     @media (min-width: 769px) {
-      input, button { width: 200px; font-size: 18px; }
+      input,
+      button {
+        width: 200px;
+        font-size: 18px;
+      }
     }
   </style>
 </head>
 <body>
-
   <h2>enter two numbers</h2>
   <input type="number" id="start" placeholder="start number" />
   <input type="number" id="end" placeholder="end number" />
-  
+
   <div>
     <button onclick="generateNumbers('all')">all</button>
     <button onclick="generateNumbers('even')">even</button>
     <button onclick="generateNumbers('odd')">odd</button>
   </div>
 
-  <div>
-    <button onclick="saveAsTxt()">save as txt</button>
-    <button onclick="copyOutput()">copy output</button>
-  </div>
-
   <div class="result" id="result"></div>
+  <div class="btn-row" id="extra-buttons"></div>
 
   <script>
     function generateNumbers(type) {
-      let start = parseInt(document.getElementById('start').value)
-      let end = parseInt(document.getElementById('end').value)
+      const start = parseInt(document.getElementById('start').value);
+      const end = parseInt(document.getElementById('end').value);
+      const resultEl = document.getElementById('result');
+      const btnRow = document.getElementById('extra-buttons');
+      btnRow.innerHTML = ''; // clear old buttons
+
       if (isNaN(start) || isNaN(end)) {
-        document.getElementById('result').innerText = 'please enter valid numbers'
-        return
+        resultEl.innerText = 'please enter valid numbers';
+        return;
       }
-      let numbers = []
+      if (start > end) {
+        resultEl.innerText = 'start must be less than or equal to end';
+        return;
+      }
+
+      let numbers = [];
       for (let i = start; i <= end; i++) {
-        if (type === 'all') {
-          numbers.push(i)
-        } else if (type === 'even' && i % 2 === 0) {
-          numbers.push(i)
-        } else if (type === 'odd' && i % 2 !== 0) {
-          numbers.push(i)
-        }
+        if (type === 'all') numbers.push(i);
+        else if (type === 'even' && i % 2 === 0) numbers.push(i);
+        else if (type === 'odd' && i % 2 !== 0) numbers.push(i);
       }
-      let output = ''
-      for (let i = 0; i < numbers.length; i++) {
-        output += numbers[i]
-        if ((i + 1) % 10 === 0) {
-          output += '\n'
-        } else if (i !== numbers.length - 1) {
-          output += ', '
+
+      if (numbers.length > 100000) {
+        resultEl.innerText = 'copy output / save as text to view >w<';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'copy output';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(numbers.join(', ')).then(() => {
+            alert('copied to clipboard >w<');
+          });
+        };
+
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = 'save as txt';
+        saveBtn.onclick = () => {
+          const blob = new Blob([numbers.join(', ')], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `numbers_${start}_to_${end}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        };
+
+        btnRow.appendChild(copyBtn);
+        btnRow.appendChild(saveBtn);
+      } else {
+        let output = '';
+        for (let i = 0; i < numbers.length; i++) {
+          output += numbers[i];
+          if ((i + 1) % 10 === 0) output += '\n';
+          else if (i !== numbers.length - 1) output += ', ';
         }
+        resultEl.innerText = output || 'no numbers found';
       }
-      document.getElementById('result').innerText = output || 'no numbers found'
-    }
-
-    function saveAsTxt() {
-      const output = document.getElementById('result').innerText
-      if (!output || output === 'please enter valid numbers' || output === 'no numbers found') return
-      const blob = new Blob([output], {type: 'text/plain'})
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'numbers.txt'
-      a.click()
-      URL.revokeObjectURL(url)
-    }
-
-    function copyOutput() {
-      const output = document.getElementById('result').innerText
-      if (!output || output === 'please enter valid numbers' || output === 'no numbers found') return
-      navigator.clipboard.writeText(output)
-        .then(() => alert('copied to clipboard >w<'))
-        .catch(() => alert('failed to copy :('))
     }
   </script>
-
 </body>
 </html>
