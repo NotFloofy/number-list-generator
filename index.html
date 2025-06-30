@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>number list generator</title>
   <style>
     body {
@@ -12,21 +12,21 @@
       text-align: center;
       padding: 20px;
       margin: 0;
-      overflow-x: hidden
+      overflow-x: hidden;
     }
     input, button {
       padding: 10px;
       margin: 10px;
       border: none;
-      border-radius: 5px
+      border-radius: 5px;
     }
     button {
       background-color: #3498db;
       color: white;
-      cursor: pointer
+      cursor: pointer;
     }
     button:hover {
-      background-color: #2980b9
+      background-color: #2980b9;
     }
     .result {
       margin-top: 20px;
@@ -34,27 +34,37 @@
       text-align: left;
       width: 100%;
       white-space: pre-wrap;
-      word-break: break-word
+      word-break: break-word;
+      min-height: 120px;
+      border: 1px solid #2980b9;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #34495e;
     }
     @media (max-width: 768px) {
-      body { padding: 10px }
-      input, button { width: 100%; font-size: 16px }
+      body { padding: 10px; }
+      input, button { width: 100%; font-size: 16px; }
     }
     @media (min-width: 769px) {
-      input, button { width: 200px; font-size: 18px }
+      input, button { width: 200px; font-size: 18px; }
     }
   </style>
 </head>
 <body>
 
   <h2>enter two numbers</h2>
-  <input type="number" id="start" placeholder="start number">
-  <input type="number" id="end" placeholder="end number">
+  <input type="number" id="start" placeholder="start number" />
+  <input type="number" id="end" placeholder="end number" />
   
   <div>
     <button onclick="generateNumbers('all')">all</button>
     <button onclick="generateNumbers('even')">even</button>
     <button onclick="generateNumbers('odd')">odd</button>
+  </div>
+
+  <div>
+    <button onclick="saveAsTxt()">save as txt</button>
+    <button onclick="copyOutput()">copy output</button>
   </div>
 
   <div class="result" id="result"></div>
@@ -87,6 +97,26 @@
         }
       }
       document.getElementById('result').innerText = output || 'no numbers found'
+    }
+
+    function saveAsTxt() {
+      const output = document.getElementById('result').innerText
+      if (!output || output === 'please enter valid numbers' || output === 'no numbers found') return
+      const blob = new Blob([output], {type: 'text/plain'})
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'numbers.txt'
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('result').innerText
+      if (!output || output === 'please enter valid numbers' || output === 'no numbers found') return
+      navigator.clipboard.writeText(output)
+        .then(() => alert('copied to clipboard >w<'))
+        .catch(() => alert('failed to copy :('))
     }
   </script>
 
